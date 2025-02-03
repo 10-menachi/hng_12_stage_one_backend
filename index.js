@@ -14,10 +14,6 @@ const port = process.env.PORT || 3000;
 
 app.use(cors());
 
-app.get("", (req, res) => {
-  res.json({ message: "Hello, World!" });
-});
-
 app.get("/api/classify-number", async (req, res) => {
   const number = parseInt(req.query.number, 10);
 
@@ -25,34 +21,24 @@ app.get("/api/classify-number", async (req, res) => {
     return res.status(400).json({
       number: req.query.number,
       error: true,
+      message: "Invalid number. Please provide an integer.",
     });
   }
 
   const properties = [];
-  if (is_armstrong(number)) {
-    properties.push("armstrong");
-  }
-  if (is_even(number)) {
-    properties.push("even");
-  } else {
-    properties.push("odd");
-  }
+  if (is_armstrong(number)) properties.push("armstrong");
+  properties.push(is_even(number) ? "even" : "odd");
 
-  let fun_fact = "";
-
+  let fun_fact = "Fun fact not available.";
   try {
-    const url = `http://numbersapi.com/${number}`;
-    const response = await axios.get(url);
-    fun_fact = response.data;
+    const { data } = await axios.get(`http://numbersapi.com/${number}/math`);
+    fun_fact = data;
   } catch (error) {
-    return res.status(400).json({
-      number: number,
-      error: true,
-    });
+    console.error("Error fetching fun fact", error.message);
   }
 
   res.status(200).json({
-    number: number,
+    number,
     is_prime: is_prime(number),
     is_perfect: is_perfect(number),
     properties,
@@ -62,5 +48,5 @@ app.get("/api/classify-number", async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`App listening on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });
