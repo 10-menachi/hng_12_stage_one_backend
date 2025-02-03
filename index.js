@@ -19,9 +19,8 @@ app.get("/api/classify-number", async (req, res) => {
 
   if (isNaN(number)) {
     return res.status(400).json({
-      number: req.query.number,
       error: true,
-      message: "Invalid number. Please provide an integer.",
+      number: "alphabet",
     });
   }
 
