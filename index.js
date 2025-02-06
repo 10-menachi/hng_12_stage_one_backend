@@ -15,7 +15,9 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 
 app.get("/api/classify-number", async (req, res) => {
-  const number = parseInt(req.query.number, 10);
+  const number = req.query.number;
+
+  console.log(number);
 
   if (isNaN(number)) {
     return res.status(400).json({
